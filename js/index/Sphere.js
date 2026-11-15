@@ -1,6 +1,7 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js";
 
 const SPHERE_CONTAINER = document.getElementById("Sphere-Container");
+const MAIN = SPHERE_CONTAINER.parentElement;    // <main> : son overflow: hidden délimite ce qui est réellement visible
 
 function InitSphere()
 {
@@ -15,13 +16,20 @@ function InitSphere()
         if (FULL_W == 0 || FULL_H == 0)
         { return; }
 
-        // Zone visible = intersection entre la boîte et la fenêtre (coordonnées relatives à la boîte)
-        const VIEW_W = document.documentElement.clientWidth;
-        const VIEW_H = document.documentElement.clientHeight;
-        const X = Math.min(Math.max(0, -BOX.left), FULL_W - 1);
-        const Y = Math.min(Math.max(0, -BOX.top), FULL_H - 1);
-        const W = Math.max(1, Math.ceil(Math.min(BOX.right, VIEW_W) - Math.max(BOX.left, 0)));
-        const H = Math.max(1, Math.ceil(Math.min(BOX.bottom, VIEW_H) - Math.max(BOX.top, 0)));
+        const EPSILON = 0.001;
+        const MAIN_BOX = MAIN.getBoundingClientRect();
+        const X = Math.floor(Math.max(BOX.left, MAIN_BOX.left) - BOX.left + EPSILON);
+        const Y = Math.floor(Math.max(BOX.top, MAIN_BOX.top) - BOX.top + EPSILON);
+        const W = Math.ceil(Math.min(BOX.right, MAIN_BOX.right) - BOX.left - EPSILON) - X;
+        const H = Math.ceil(Math.min(BOX.bottom, MAIN_BOX.bottom) - BOX.top - EPSILON) - Y;
+        if (W < 1 || H < 1)
+        { return; }
+
+        // Rien n'a changé (ex. barre d'adresse mobile qui s'affiche / se masque) : on ne touche pas au canvas
+        const VIEW_KEY = [FULL_W, FULL_H, X, Y, W, H].join(",");
+        if (VIEW_KEY == LastView)
+        { return; }
+        LastView = VIEW_KEY;
 
         const ASPECT = FULL_W / FULL_H;  // Ratio largeur par hauteur
         CAMERA.aspect = ASPECT;
@@ -108,8 +116,10 @@ function InitSphere()
 
     // =================================== [ VARIABLES ] ===================================
 
+    let LastView = "";                              // Dernière zone appliquée (évite de réallouer le canvas pour rien)
+
     const COLOR     = getComputedStyle(document.documentElement).getPropertyValue("--second-color");
-    const SCENE     = new THREE.Scene();    // Création de la scène 3D
+    const SCENE     = new THREE.Scene();            // Création de la scène 3D
     const CAMERA    = new THREE.PerspectiveCamera(45, SPHERE_CONTAINER.clientWidth / SPHERE_CONTAINER.clientHeight, 0.1, 1000); // Création de la vue
     const RENDERER  = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 
