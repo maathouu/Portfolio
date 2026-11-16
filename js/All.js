@@ -1,6 +1,6 @@
 // =================================== [ HEADER ] ===================================
 
-function HeaderSelected()
+function IniNavLink()
 {
     const HEADER_LINKS = document.getElementsByClassName("Header-Link");
     let CurrentPath = window.location.pathname;
@@ -13,13 +13,14 @@ function HeaderSelected()
         const LINK_PATH = new URL(HEADER_LINKS[i].href).pathname;
         if (LINK_PATH == CurrentPath)
         { HEADER_LINKS[i].setAttribute("aria-current", "page"); }   // Le style est géré en CSS (global.css)
+        AnimNavLink(HEADER_LINKS[i]);
     }
 }
 
 // Même si l'utilisateur enlève sa souris / sa sélection clavier pendant l'animation, celle-ci continue jusqu'à la fin
-function HeaderLinkHover(Link)
+function AnimNavLink(Link)
 {
-    if (Link.getAttribute("aria-current") == "page")       // Si le lien est déjà souligné en permanence (HeaderSelected)
+    if (Link.getAttribute("aria-current") == "page")       // Si le lien est déjà souligné en permanence (IniNavLink)
     { return; }
 
     let Hovered = false;                                    // La souris est sur le lien
@@ -55,15 +56,6 @@ function HeaderLinkHover(Link)
     Link.addEventListener("blur",       () => { Focused = false; Update(); });
 }
 
-function HeaderHover()
-{
-    const HEADER_LINKS = document.getElementsByClassName("Header-Link");
-
-    for (const LINK of HEADER_LINKS)
-    { HeaderLinkHover(LINK); }
-}
-
 // =================================== [ INIT ] ===================================
 
-HeaderSelected();
-HeaderHover();
+IniNavLink();

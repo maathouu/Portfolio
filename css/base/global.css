@@ -54,33 +54,7 @@ header {
                 font-family: var(--Medium-font-family);
                 color: var(--second-color);
             }
-                
-                .Header-Link::after {                           /* Soulignement : se trace de gauche à droite, se retire vers la droite. Le tracé va toujours jusqu'au bout ( HeaderHover ) */
-                    position: absolute;
-                    left: 0;
-                    right: 0;
-                    bottom: -0.4em;
 
-                    height: 3px;
-                    content: "";
-
-                    background-color: currentColor;
-
-                    transform: scaleX(0);
-                    transform-origin: right;
-                    transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
-                }
-
-                .Header-Link.is-drawn::after,                   /* Survol / focus clavier (posé par All.js : HeaderHover) */
-                .Header-Link[aria-current="page"]::after {      /* Page courante : toujours soulignée (posé par All.js : HeaderSelected) */
-                    transform: scaleX(1);
-                    transform-origin: left;
-                }
-
-@media (prefers-reduced-motion: reduce) {
-    .Header-Link::after
-    { transition: none; }
-}
 
 @media (max-width:800px) {
     header 
